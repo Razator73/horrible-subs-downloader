@@ -11,7 +11,9 @@ from selenium import webdriver
 def get_horrible_sub_elements(show_url):
     url = f'https://horriblesubs.info/shows/{show_url}/'
     logger.info(url)
-    browser = webdriver.Chrome()
+    opts = webdriver.ChromeOptions()
+    opts.add_argument('headless')
+    browser = webdriver.Chrome(options=opts)
     browser.get(url)
     soup = bs4.BeautifulSoup(browser.page_source, features='lxml')
     browser.quit()
