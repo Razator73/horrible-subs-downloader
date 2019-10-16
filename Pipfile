@@ -7,11 +7,10 @@ verify_ssl = true
 ipython = "*"
 
 [packages]
-requests = "*"
 beautifulsoup4 = "*"
 lxml = "*"
 transmission-rpc = "*"
 selenium = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
