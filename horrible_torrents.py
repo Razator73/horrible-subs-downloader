@@ -53,13 +53,15 @@ def add_torrents(show_name, link_elements, client):
 
 def wait_for_download(ids, client):
     for t_id in ids:
-        while (torrent := client.get_torrent(t_id)).status == "downloading":
+        torrent = client.get_torrent(t_id)
+        while torrent.status == "downloading":
             try:
                 sleep_secs = min([max([5, torrent.eta.seconds / 2]), 300])
             except ValueError:
                 sleep_secs = 60
             logger.debug(f'Sleeping for {sleep_secs} seconds')
             time.sleep(sleep_secs)
+            torrent = client.get_torrent(t_id)
 
 
 if __name__ == '__main__':
