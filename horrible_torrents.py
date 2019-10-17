@@ -18,6 +18,7 @@ def get_horrible_sub_elements(show_url):
     logger.debug(f'Checking at {url}')
     opts = webdriver.ChromeOptions()
     opts.add_argument('headless')
+    opts.binary_location = '/usr/bin/chromium-browser'
     browser = webdriver.Chrome(options=opts)
     browser.get(url)
     soup = bs4.BeautifulSoup(browser.page_source, features='lxml')

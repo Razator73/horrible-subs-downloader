@@ -16,8 +16,9 @@ sudo service transmission-daemon start
 See [transmission documentation](https://github.com/transmission/transmission/wiki/Editing-Configuration-Files)
 for details on the `settings.json` file options
 
-###Others
+### Others
 ```
+sudo apt install -y chromium-browser chromium-chromedriver
 sudo apt install -y libxml2-dev libxslt1-dev
 ```
 
