@@ -1,16 +1,21 @@
-import logging
 import os
 import sys
+import time
 from pathlib import Path
 
 import bs4
 import transmission_rpc as trpc
 from selenium import webdriver
 
+import copy_files
+from set_logger import define_logger
+
+logger = define_logger(__name__)
+
 
 def get_horrible_sub_elements(show_url):
     url = f'https://horriblesubs.info/shows/{show_url}/'
-    logger.info(url)
+    logger.debug(f'Checking at {url}')
     opts = webdriver.ChromeOptions()
     opts.add_argument('headless')
     browser = webdriver.Chrome(options=opts)
@@ -21,51 +26,64 @@ def get_horrible_sub_elements(show_url):
     return soup.select('div[class="rls-link link-1080p"][id]')
 
 
-def add_torrents(show_name, link_elements):
-    try:
-        tor_client = trpc.Client(port=os.environ['TRANSMISSION_PORT'],
-                                 username=os.environ['TRANSMISSION_USERNAME'],
-                                 password=os.environ['TRANSMISSION_PASSWORD'])
-    except KeyError:
-        logger.exception('Environment variables not set correctly')
-        sys.exit(1)
+def add_torrents(show_name, link_elements, client):
 
-    ids_path = Path(__file__).parent / 'show-logs' / f'{show_name}.log'
+    try:
+        ids_path = Path(__file__).parent / 'show-logs' / f'{show_name}.log'
+    except NameError:
+        ids_path = Path('show-logs') / f'{show_name}.log'
     ids_path.touch(exist_ok=True)
 
     with open(ids_path) as f:
         ids = [x.strip() for x in f.readlines()]
 
-    added_torrents = []
+    added_torrent_ids = []
 
     for elem in link_elements:
         link_id = elem.attrs['id']
         if link_id not in ids:
-            logger.info(link_id)
+            logger.info(f'New episode {show_name} - {link_id}')
             with open(ids_path, mode='a') as f:
                 f.write(f'{link_id}\n')
             magnet_url = elem.select_one('a[title="Magnet Link"]').attrs['href']
-            # added_torrents.append(tor_client.add_torrent(magnet_url))
+            added_torrent_ids.append(client.add_torrent(magnet_url).id)
 
-    return added_torrents
+    return added_torrent_ids
+
+
+def wait_for_download(ids, client):
+    for t_id in ids:
+        while (torrent := client.get_torrent(t_id)).status == "downloading":
+            try:
+                sleep_secs = min([max([5, torrent.eta.seconds / 2]), 300])
+            except ValueError:
+                sleep_secs = 60
+            logger.debug(f'Sleeping for {sleep_secs} seconds')
+            time.sleep(sleep_secs)
 
 
 if __name__ == '__main__':
-    logger = logging.Logger(__name__)
-    logger.setLevel(logging.WARNING)
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('\n%(asctime)s - %(levelname)s - %(message)s',
-                                  datefmt='%Y-%m-%d %H:%M:%S')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
 
     # noinspection PyBroadException
     try:
         check_args = True
         show = sys.argv[1] if check_args else 'sword-art-online-alicization-war-of-underworld'
-        logger.info(show)
+        logger.debug(f'Getting new episodes for {show}')
         elements = get_horrible_sub_elements(show)
-        add_torrents(show, elements)
+
+        try:
+            tor_client = trpc.Client(port=os.environ['TRANSMISSION_PORT'],
+                                     username=os.environ['TRANSMISSION_USERNAME'],
+                                     password=os.environ['TRANSMISSION_PASSWORD'])
+        except KeyError:
+            logger.exception('Environment variables not set correctly')
+            sys.exit(1)
+
+        torrent_ids = add_torrents(show, elements, tor_client)
+        logger.debug(f'Torrent ids - {torrent_ids}')
+        wait_for_download(torrent_ids, tor_client)
+        show_pattern = f'*{sys.argv[2]}*' if check_args else '*Sword Art Online - Alicization - War of Underworld*'
+        copy_files.show_files(show_pattern)
     except Exception:
         logger.exception('Failed to get all torrents')
         sys.exit(1)
