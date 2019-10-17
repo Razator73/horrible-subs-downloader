@@ -8,7 +8,6 @@ import transmission_rpc as trpc
 from pyvirtualdisplay import Display
 from selenium import webdriver
 
-import copy_files
 from set_logger import define_logger
 
 logger = define_logger(__name__)
@@ -84,8 +83,6 @@ if __name__ == '__main__':
         torrent_ids = add_torrents(show, elements, tor_client)
         logger.debug(f'Torrent ids - {torrent_ids}')
         wait_for_download(torrent_ids, tor_client)
-        show_pattern = f'*{sys.argv[2]}*' if check_args else '*Sword Art Online - Alicization - War of Underworld*'
-        copy_files.show_files(show_pattern)
     except Exception:
         logger.exception('Failed to get all torrents')
         sys.exit(1)

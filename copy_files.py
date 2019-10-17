@@ -24,5 +24,5 @@ def show_files(pattern):
 
 if __name__ == '__main__':
     check_args = True
-    show_pattern = sys.argv[1] if check_args else 'NO FILES SHOULD MATCH THIS'
+    show_pattern = f'*{sys.argv[1]}*' if check_args else 'NO FILES SHOULD MATCH THIS'
     show_files(show_pattern)
