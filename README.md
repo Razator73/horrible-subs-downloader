@@ -20,6 +20,7 @@ for details on the `settings.json` file options
 ```
 sudo apt install -y chromium-browser chromium-chromedriver
 sudo apt install -y libxml2-dev libxslt1-dev
+sudo apt install -y xvfb
 ```
 
 ### VPN (recommended)

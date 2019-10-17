@@ -5,6 +5,7 @@ from pathlib import Path
 
 import bs4
 import transmission_rpc as trpc
+from pyvirtualdisplay import Display
 from selenium import webdriver
 
 import copy_files
@@ -16,13 +17,13 @@ logger = define_logger(__name__)
 def get_horrible_sub_elements(show_url):
     url = f'https://horriblesubs.info/shows/{show_url}/'
     logger.debug(f'Checking at {url}')
-    opts = webdriver.ChromeOptions()
-    opts.add_argument('headless')
-    opts.binary_location = '/usr/bin/chromium-browser'
-    browser = webdriver.Chrome(options=opts)
+    display = Display(visible=False)
+    display.start()
+    browser = webdriver.Chrome()
     browser.get(url)
     soup = bs4.BeautifulSoup(browser.page_source, features='lxml')
     browser.quit()
+    display.stop()
 
     return soup.select('div[class="rls-link link-1080p"][id]')
 

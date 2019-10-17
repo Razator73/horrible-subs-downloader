@@ -11,6 +11,7 @@ beautifulsoup4 = "*"
 lxml = "*"
 transmission-rpc = "*"
 selenium = "*"
+pyvirtualdisplay = "*"
 
 [requires]
 python_version = "3.8"
