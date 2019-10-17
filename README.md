@@ -31,7 +31,7 @@ cd /etc/openvpn
 sudo wget https://www.privateinternetaccess.com/openvpn/openvpn.zip
 sudo unzip openvpn.zip
 ```
-Set it up to autostart at boot by supplying your PIA username to the first line
+Set it up to auto start at boot by supplying your PIA username to the first line
 and then the password to the second line of a `login.conf` file
 ```
 sudo nano login.conf
@@ -62,7 +62,7 @@ Run:
 ```
 sudo nano /etc/default/openvpn
 ```
-Under the last line where it says autostart, add:
+Under the last line where it says auto start, add:
 ```
 AUTOSTART=”desired country you'd like to connect to”
 ```
