@@ -61,6 +61,7 @@ def wait_for_download(ids, client):
                 sleep_secs = 60
             logger.debug(f'Sleeping for {sleep_secs} seconds')
             time.sleep(sleep_secs)
+        torrent.stop()
 
 
 if __name__ == '__main__':
