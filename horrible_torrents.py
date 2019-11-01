@@ -61,6 +61,8 @@ def wait_for_download(ids, client):
                 sleep_secs = 60
             logger.debug(f'Sleeping for {sleep_secs} seconds')
             time.sleep(sleep_secs)
+        # TODO: send notification that the torrent is done
+        # look into Hangouts API https://developers.google.com/hangouts/chat/quickstart/incoming-bot-python
         torrent.stop()
 
 
