@@ -53,6 +53,7 @@ def add_torrents(show_name, link_elements, client):
 
 
 def wait_for_download(ids, client):
+    time.sleep(30)
     for t_id in ids:
         while (torrent := client.get_torrent(t_id)).status == "downloading":
             try:
