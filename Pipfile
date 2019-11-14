@@ -12,6 +12,7 @@ lxml = "*"
 transmission-rpc = "*"
 selenium = "*"
 pyvirtualdisplay = "*"
+ezgmail = "*"
 
 [requires]
 python_version = "3.8"

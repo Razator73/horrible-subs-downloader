@@ -3,6 +3,8 @@ import shutil
 import sys
 from pathlib import Path
 
+import ezgmail
+
 from set_logger import define_logger
 
 logger = define_logger(__name__)
@@ -20,6 +22,10 @@ def show_files(pattern):
     for file in [x for x in download_dir.glob(pattern) if x.name not in copied]:
         logger.info(f'Copying {file}...')
         shutil.copy(file, destination_dir)
+        ezgmail.send('ryan.t.scott73@gmail.com', 'Added file to FTP',
+                     'The following file was successfully added to the ftp:\n\n'
+                     f'{file.name}\n\n'
+                     'Thanks,')
 
 
 if __name__ == '__main__':
