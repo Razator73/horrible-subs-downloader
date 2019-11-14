@@ -31,4 +31,6 @@ def show_files(pattern):
 if __name__ == '__main__':
     check_args = True
     show_pattern = f'*{sys.argv[1]}*' if check_args else 'NO FILES SHOULD MATCH THIS'
+    ezgmail.init(tokenFile=os.environ.get('GMAIL_TOKEN', 'token.json'),
+                 credentialsFile=os.environ.get('GMAIL_CREDENTIALS', 'credentials.json'))
     show_files(show_pattern)
