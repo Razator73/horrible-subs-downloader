@@ -22,10 +22,11 @@ def show_files(pattern):
     for file in [x for x in download_dir.glob(pattern) if x.name not in copied]:
         logger.info(f'Copying {file}...')
         shutil.copy(file, destination_dir)
-        ezgmail.send('ryan.t.scott73@gmail.com', 'Added file to FTP',
-                     'The following file was successfully added to the ftp:\n\n'
-                     f'{file.name}\n\n'
-                     'Thanks,')
+        ezgmail.send(recipient=os.environ.get('GMAIL_RECIPIENT', ezgmail.EMAIL_ADDRESS),
+                     subject='Added file to FTP',
+                     body='The following file was successfully added to the ftp:\n\n'
+                          f'{file.name}\n\n'
+                          'Thanks,')
 
 
 if __name__ == '__main__':
