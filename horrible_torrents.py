@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 
 import bs4
+import ezgmail
 import transmission_rpc as trpc
 from pyvirtualdisplay import Display
 from selenium import webdriver
@@ -44,6 +45,9 @@ def add_torrents(show_name, link_elements, client):
         link_id = elem.attrs['id']
         if link_id not in ids:
             logger.info(f'New episode {show_name} - {link_id}')
+            ezgmail.send(recipient=os.environ.get('GMAIL_RECIPIENT', ezgmail.EMAIL_ADDRESS),
+                         subject='Added file to FTP',
+                         body=f'Starting to download the following episode:\n\n\t{show_name} - {link_id}')
             with open(ids_path, mode='a') as f:
                 f.write(f'{link_id}\n')
             magnet_url = elem.select_one('a[title="Magnet Link"]').attrs['href']
@@ -73,6 +77,8 @@ if __name__ == '__main__':
         show = sys.argv[1] if check_args else 'sword-art-online-alicization-war-of-underworld'
         logger.debug(f'Getting new episodes for {show}')
         elements = get_horrible_sub_elements(show)
+        ezgmail.init(tokenFile=os.environ.get('GMAIL_TOKEN', 'token.json'),
+                     credentialsFile=os.environ.get('GMAIL_CREDENTIALS', 'credentials.json'))
 
         try:
             tor_client = trpc.Client(port=os.environ['TRANSMISSION_PORT'],
