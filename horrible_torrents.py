@@ -46,8 +46,8 @@ def add_torrents(show_name, link_elements, client):
         if link_id not in ids:
             logger.info(f'New episode {show_name} - {link_id}')
             ezgmail.send(recipient=os.environ.get('GMAIL_RECIPIENT', ezgmail.EMAIL_ADDRESS),
-                         subject='Added file to FTP',
-                         body=f'Starting to download the following episode:\n\n\t{show_name} - {link_id}')
+                         subject='Added Torrent',
+                         body=f'Starting the download of the following episode:\n\n\t{show_name} - {link_id}')
             with open(ids_path, mode='a') as f:
                 f.write(f'{link_id}\n')
             magnet_url = elem.select_one('a[title="Magnet Link"]').attrs['href']
